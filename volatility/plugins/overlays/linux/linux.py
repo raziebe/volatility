@@ -153,7 +153,7 @@ def parse_system_map(data, module):
         except ValueError:
             continue
 
-        if symbol == "arm_syscall":
+        if symbol == "arm_syscall" or symbol == "compat_arm_syscall": # Added this 'fix'
             arch = "ARM"
 
         if not symbol in sys_map[module]:
@@ -192,8 +192,8 @@ def LinuxProfileFactory(profpkg):
             sysmapdata = profpkg.read(f.filename)
             arch, memmodel, sysmap = parse_system_map(profpkg.read(f.filename), "kernel")
 
-    if memmodel == "64bit":
-        arch = "x64"
+    # if memmodel == "64bit" and arch != "ARM": # Added this
+      # arch = "x64"
 
     if not sysmapdata or not dwarfdata:
         # Might be worth throwing an exception here?

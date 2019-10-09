@@ -103,11 +103,11 @@ class linux_pslist(linux_common.AbstractLinuxCommand):
         if task.mm.pgd == None:
             dtb = task.mm.pgd
         else:
-            dtb = self.addr_space.vtop(task.mm.pgd) or task.mm.pgd
+            dtb = task.mm.pgd #self.addr_space.vtop(task.mm.pgd) or task.mm.pgd # add if has attribute(func) vtop
 
         task_offset = None
-        if hasattr(self, "wants_physical") and task.obj_vm.base:
-            task_offset = self.addr_space.vtop(task.obj_offset)
+        #if hasattr(self, "wants_physical") and task.obj_vm.base: # Commented this, needs a fix instead of commentting (has attribute? ) -> looks like this plugin expects a virtual address space
+         #   task_offset = self.addr_space.vtop(task.obj_offset)
             
         if task_offset == None:
             task_offset = task.obj_offset
@@ -127,6 +127,7 @@ class linux_pslist(linux_common.AbstractLinuxCommand):
                                   start_time])
 
     def render_text(self, outfd, data):
+        # The following is a call to a funcion with data
         self.table_header(outfd, [("Offset", "[addrpad]"),
                                   ("Name", "20"),
                                   ("Pid", "15"),

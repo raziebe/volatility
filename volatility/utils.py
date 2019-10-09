@@ -26,9 +26,10 @@ import volatility.debug as debug
 import socket
 import itertools
 
-#pylint: disable-msg=C0111
 
-def load_as(config, astype = 'virtual', **kwargs):
+# pylint: disable-msg=C0111
+
+def load_as(config, astype='virtual', **kwargs):
     """Loads an address space by stacking valid ASes on top of each other (priority order first)"""
 
     base_as = None
@@ -41,11 +42,10 @@ def load_as(config, astype = 'virtual', **kwargs):
     while found:
         debug.debug("Voting round")
         found = False
-        for cls in sorted(registry.get_plugin_classes(addrspace.BaseAddressSpace).values(),
-                          key = lambda x: x.order if hasattr(x, 'order') else 10):
+        for cls in sorted(registry.get_plugin_classes(addrspace.BaseAddressSpace).values(), key=lambda x: x.order if hasattr(x, 'order') else 10):
             debug.debug("Trying {0} ".format(cls))
             try:
-                base_as = cls(base_as, config, astype = astype, **kwargs)
+                base_as = cls(base_as, config, astype=astype, **kwargs)
                 debug.debug("Succeeded instantiating {0}".format(base_as))
                 found = True
                 break
@@ -59,14 +59,15 @@ def load_as(config, astype = 'virtual', **kwargs):
                 continue
 
     if not isinstance(base_as, addrspace.AbstractVirtualAddressSpace) and (astype == 'virtual'):
-        base_as = None
+        pass #base_as = None # Should probably warn instead
 
     if base_as is None:
         raise error
 
     return base_as
 
-def Hexdump(data, width = 16):
+
+def Hexdump(data, width=16):
     """ Hexdump function shared by various plugins """
     for offset in xrange(0, len(data), width):
         row_data = data[offset:offset + width]
@@ -75,14 +76,15 @@ def Hexdump(data, width = 16):
 
         yield offset, hexdata, translated_data
 
+
 def remove_unprintable(str):
     return ''.join([c for c in str if (ord(c) > 31 or ord(c) == 9) and ord(c) <= 126])
+
 
 # Compensate for Windows python not supporting socket.inet_ntop and some
 # Linux systems (i.e. OpenSuSE 11.2 w/ Python 2.6) not supporting IPv6. 
 
 def inet_ntop(address_family, packed_ip):
-
     def inet_ntop4(packed_ip):
         if not isinstance(packed_ip, str):
             raise TypeError("must be string, not {0}".format(type(packed_ip)))
@@ -102,7 +104,7 @@ def inet_ntop(address_family, packed_ip):
 
         # Replace a run of 0x00s with None
         numlen = [(k, len(list(g))) for k, g in itertools.groupby(words)]
-        max_zero_run = sorted(sorted(numlen, key = lambda x: x[1], reverse = True), key = lambda x: x[0])[0]
+        max_zero_run = sorted(sorted(numlen, key=lambda x: x[1], reverse=True), key=lambda x: x[0])[0]
         words = []
         for k, l in numlen:
             if (k == 0) and (l == max_zero_run[1]) and not (None in words):
@@ -129,6 +131,7 @@ def inet_ntop(address_family, packed_ip):
     elif address_family == socket.AF_INET6:
         return inet_ntop6(packed_ip)
     raise socket.error("[Errno 97] Address family not supported by protocol")
+
 
 def iterfind(data, string):
     """This function is called by the search_process_memory() 
