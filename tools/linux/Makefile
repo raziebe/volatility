@@ -1,5 +1,5 @@
 obj-m += module.o
-KDIR ?= /
+KDIR ?= /home/erez/Desktop/objs
 KVER ?= $(shell uname -r)
 
 -include version.mk
