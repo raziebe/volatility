@@ -1,0 +1,5 @@
+rm volatility/plugins/overlays/linux/*.zip
+make clean
+make
+zip volatility/plugins/overlays/linux/razacq.zip  tools/linux/module.dwarf tools/linux/System.map
+python vol.py
